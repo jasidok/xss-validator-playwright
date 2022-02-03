@@ -390,6 +390,7 @@ IIntruderPayloadGeneratorFactory, IIntruderPayloadProcessor, IScannerCheck {
                 BurpExtender.this.notice = new JPanel();
                 JLabel titleLabel = new JLabel("<html><center><h2>xssValidator</h2>Created By: <em>John Poulin</em> (@forced-request)<br />\n" +
                     "Version: " + BurpExtender.this.VERSION + "</center><br />");
+                titleLabel.putClientProperty("html.disable", null);
 
                 String initialText = "<html>\n" +
                 "<em>xssValidator is an intruder extender with a customizable list of payloads, \n" +
@@ -404,8 +405,9 @@ IIntruderPayloadGeneratorFactory, IIntruderPayloadProcessor, IScannerCheck {
                 "    <li>Under the intruder options tab, add the <em>Grep Phrase</em> to \n" +
                 "    the <em>Grep-Match</em> panel</li>" +
                 "    <li>Successful attacks will be denoted by presence of the <em>Grep Phrase</em>\n" +
-                "</ul>\n"; 
+                "</ul>\n";
                 BurpExtender.this.htmlDescription = new JLabel(initialText);
+                BurpExtender.this.htmlDescription.putClientProperty("html.disable", null);
                 BurpExtender.this.notice.add(titleLabel);
                 BurpExtender.this.notice.add(BurpExtender.this.htmlDescription);
 
@@ -477,6 +479,7 @@ IIntruderPayloadGeneratorFactory, IIntruderPayloadProcessor, IScannerCheck {
                         "placeholders define the location of the Javascript function.</li>\n" +
                         "<li><b>{EVENTHANDLER}</b> placeholders define location of Javascript events, <br />\n" +
                         "such as onmouseover, that are tested via scriptable browsers.</li></ul>");
+                payloadLabel.putClientProperty("html.disable", null);
                 BurpExtender.this.rightPanel.add(payloadLabel);
                 BurpExtender.this.rightPanel
                         .add(BurpExtender.this.scrollingArea);
