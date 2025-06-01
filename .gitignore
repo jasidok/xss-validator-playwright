@@ -26,19 +26,22 @@ coverage/
 # Playwright test artifacts
 test-results/
 playwright-report/
+playwright-browsers/
+ms-playwright/
 
 # Build outputs
 dist/
 build/
 
 # Cache directories
-.cache/
 cache/
+.cache/
 sessions/
 
-# Reports
-reports/*.html
-reports/*.json
+# Reports (generated files)
+reports/
+*.html
+*.json.report
 
 # OS generated files
 .DS_Store
@@ -54,14 +57,25 @@ Thumbs.db
 .idea/
 *.swp
 *.swo
+*~
 
 # Temporary files
 tmp/
 temp/
+*.tmp
+*.temp
 
 # Browser downloads
 downloads/
 
-# Configuration files with sensitive data
+# Archive files
+*.tar.gz
+*.zip
+payloads.tar.gz
+
+# Config files with sensitive data
+config/local.json
+config/production.json
+auth-config.json
 *-private.config.json
 *-secret.config.json

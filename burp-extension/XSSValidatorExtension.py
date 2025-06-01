@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*-
 from burp import IBurpExtender, ITab, IHttpListener, IScannerCheck, IScanIssue
 from java.awt import Component, GridBagLayout, GridBagConstraints, Insets, BorderLayout, FlowLayout
-from java.awt.event import ActionListener
 from javax.swing import JPanel, JLabel, JTextField, JButton, JCheckBox, JTextArea, JScrollPane, JComboBox, JSeparator, \
     SwingConstants, JOptionPane
 from javax.swing.border import TitledBorder
@@ -34,12 +34,12 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IScannerCheck):
         # Default settings
         self._settings = {
             'xss_validator_path': '/home/dok/tools/xss-validator-playwright',
-            'node_path': 'node',
+            'node_path': self._detectNodePath(),
             'browser': 'chromium',
             'verify_execution': True,
             'auto_scan': False,
             'concurrent_scans': 3,
-            'custom_selectors': 'input[type="text"], input[type="search"], textarea, input[name*="search"], input[name*="query"]',
+            'custom_selectors': 'input[type="text"], input[type="search"], input[type="email"], input[type="url"], input[type="password"], textarea, input[name*="search"], input[name*="query"], input[name*="q"], input[name*="keyword"], input[name*="term"], input[placeholder*="search"], input[id*="search"], input[class*="search"], [contenteditable="true"], input:not([type="hidden"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]):not([type="file"])',
             'timeout': 30,
             'include_reflected': True
         }
@@ -113,7 +113,9 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IScannerCheck):
         gbc_config.gridy = 3
         config_panel.add(JLabel("Input Selectors:"), gbc_config)
 
-        self._selectors_field = JTextField('input[type="text"], input[type="search"], textarea', 40)
+        self._selectors_field = JTextField(
+            'input[type="text"], input[type="search"], input[type="email"], input[type="url"], input[type="password"], textarea, input[name*="search"], input[name*="query"], input[name*="q"], input[name*="keyword"], input[name*="term"], input[placeholder*="search"], input[id*="search"], input[class*="search"], [contenteditable="true"], input:not([type="hidden"]):not([type="submit"]):not([type="button"]):not([type="reset"]):not([type="checkbox"]):not([type="radio"]):not([type="file"])',
+            40)
         gbc_config.gridx = 1
         gbc_config.fill = GridBagConstraints.HORIZONTAL
         gbc_config.weightx = 1.0
@@ -197,6 +199,13 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IScannerCheck):
     def getUiComponent(self):
         return self._panel
 
+    def processHttpMessage(self, toolFlag, messageIsRequest, messageInfo):
+        """Required method for IHttpListener interface"""
+        # We only care about responses for passive scanning
+        if not messageIsRequest:
+            # Use the existing doPassiveScan logic
+            self.doPassiveScan(messageInfo)
+
     def _manualTest(self, event):
         url = self._url_field.getText().strip()
         if not url:
@@ -223,19 +232,71 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IScannerCheck):
             return None
 
         responseString = self._helpers.bytesToString(response)
+        url = self._helpers.analyzeRequest(baseRequestResponse).getUrl().toString()
 
-        # Look for forms and input fields
-        has_forms = any(tag in responseString.lower() for tag in ['<form', '<input', '<textarea'])
+        # Skip common static resources and non-HTML responses
+        if self._shouldSkipUrl(url, responseString):
+            return None
 
-        if has_forms:
-            url = self._helpers.analyzeRequest(baseRequestResponse).getUrl().toString()
+        # Look for forms and input fields with better detection
+        has_testable_inputs = self._hasTestableInputs(responseString)
 
-            # Run test in background thread
-            thread = threading.Thread(target=self._runXSSTest, args=(url, baseRequestResponse, False))
-            thread.daemon = True
-            thread.start()
+        if has_testable_inputs:
+            # Add some randomness to avoid overwhelming the system
+            import random
+            if random.random() < 0.7:  # 70% chance to actually test
+                # Run test in background thread
+                thread = threading.Thread(target=self._runXSSTest, args=(url, baseRequestResponse, False))
+                thread.daemon = True
+                thread.start()
 
         return None
+
+    def _shouldSkipUrl(self, url, responseString):
+        """Check if URL should be skipped for XSS testing"""
+        url_lower = url.lower()
+
+        # Skip common static resources
+        static_extensions = ['.css', '.js', '.png', '.jpg', '.jpeg', '.gif', '.svg', '.ico',
+                             '.pdf', '.zip', '.xml', '.json', '.woff', '.woff2', '.ttf']
+
+        for ext in static_extensions:
+            if url_lower.endswith(ext):
+                return True
+
+        # Skip if not HTML content
+        response_lower = responseString.lower()
+        if not any(tag in response_lower for tag in ['<html', '<body', '<form', '<input']):
+            return True
+
+        # Skip logout URLs
+        if any(logout_term in url_lower for logout_term in ['logout', 'signout', 'exit']):
+            return True
+
+        return False
+
+    def _hasTestableInputs(self, responseString):
+        """Check if response contains testable input fields"""
+        response_lower = responseString.lower()
+
+        # Look for various types of input fields
+        input_indicators = [
+            '<input',
+            '<textarea',
+            '<form',
+            'contenteditable="true"',
+            'contenteditable=true',
+            'type="text"',
+            'type="search"',
+            'type="email"',
+            'type="url"',
+            'name="search"',
+            'name="query"',
+            'name="q"',
+            'placeholder="search"'
+        ]
+
+        return any(indicator in response_lower for indicator in input_indicators)
 
     def _runXSSTest(self, url, baseRequestResponse=None, is_manual=False):
         self._active_scans += 1
@@ -289,9 +350,10 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IScannerCheck):
                 cmd = [
                     self._settings['node_path'],
                     cli_path,
-                    '--url', url,
-                    '--selector', self._settings['custom_selectors'],
-                    '--config-file', config_file.name
+                    'detect',
+                    url,
+                    self._settings['custom_selectors'],
+                    '--config', config_file.name
                 ]
 
                 # Run the XSS validator
@@ -348,7 +410,7 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IScannerCheck):
                     results = json_output['results']
 
                     if results:
-                        self._appendResult("✓ XSS VULNERABILITIES FOUND (%d):\n" % len(results))
+                        self._appendResult("[+] XSS VULNERABILITIES FOUND (%d):\n" % len(results))
 
                         for i, vuln in enumerate(results, 1):
                             self._appendResult("  [%d] Payload: %s\n" % (i, vuln.get('payload', 'Unknown')))
@@ -362,7 +424,7 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IScannerCheck):
 
                         self._appendResult("\n")
                     else:
-                        self._appendResult("✓ No XSS vulnerabilities found\n\n")
+                        self._appendResult("[+] No XSS vulnerabilities found\n\n")
                 else:
                     self._appendResult("Raw output: %s\n\n" % output)
             else:
@@ -419,6 +481,48 @@ class BurpExtender(IBurpExtender, ITab, IHttpListener, IScannerCheck):
     def _appendResult(self, text):
         self._results_area.append(text)
         self._results_area.setCaretPosition(self._results_area.getDocument().getLength())
+
+    def _detectNodePath(self):
+        """Detect Node.js path automatically"""
+        import subprocess
+        import os
+
+        # Common Node.js paths to check
+        node_paths = [
+            'node',  # Default if in PATH
+            '/usr/bin/node',
+            '/usr/local/bin/node',
+            '/opt/homebrew/bin/node',  # macOS with Homebrew
+            '/home/linuxbrew/.linuxbrew/bin/node',  # Linux with Homebrew
+            os.path.expanduser('~/.nvm/versions/node/*/bin/node'),  # NVM installations
+        ]
+
+        for node_path in node_paths:
+            try:
+                # Test if node executable works
+                result = subprocess.run([node_path, '--version'],
+                                        capture_output=True, text=True, timeout=5)
+                if result.returncode == 0:
+                    version = result.stdout.strip()
+                    print("Detected Node.js at %s (%s)" % (node_path, version))
+                    return node_path
+            except:
+                continue
+
+        # If nothing found, check NVM directory more thoroughly
+        try:
+            nvm_dir = os.path.expanduser('~/.nvm/versions/node')
+            if os.path.exists(nvm_dir):
+                for version_dir in os.listdir(nvm_dir):
+                    node_path = os.path.join(nvm_dir, version_dir, 'bin', 'node')
+                    if os.path.exists(node_path):
+                        print("Found Node.js via NVM at %s" % node_path)
+                        return node_path
+        except:
+            pass
+
+        print("Could not auto-detect Node.js path, using 'node'")
+        return 'node'
 
 
 class CustomScanIssue(IScanIssue):
