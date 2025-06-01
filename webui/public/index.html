@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XSS Validator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>XSS Validator</h1>
+            <p>A tool for detecting XSS vulnerabilities using Playwright</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="detection">Detection</button>
+            <button class="tab-button" data-tab="configuration">Configuration</button>
+            <button class="tab-button" data-tab="reports">Reports</button>
+        </div>
+
+        <div class="tab-content">
+            <!-- Detection Tab -->
+            <div class="tab-pane active" id="detection">
+                <div class="card">
+                    <h2>XSS Detection</h2>
+                    <form id="detection-form">
+                        <div class="form-group">
+                            <label for="url">URL to Test:</label>
+                            <input type="url" id="url" name="url" required placeholder="https://example.com">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="selector">Input Field Selector:</label>
+                            <input type="text" id="selector" name="selector" required placeholder="#search-input">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="browser">Browser:</label>
+                            <select id="browser" name="browser">
+                                <option value="chromium">Chromium</option>
+                                <option value="firefox">Firefox</option>
+                                <option value="webkit">WebKit</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="submit-selector">Submit Button Selector:</label>
+                            <input type="text" id="submit-selector" name="submitSelector" placeholder="button[type='submit']">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="timeout">Timeout (ms):</label>
+                            <input type="number" id="timeout" name="timeout" value="2000" min="500" step="500">
+                        </div>
+                        
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="verify-execution" name="verifyExecution" checked>
+                            <label for="verify-execution">Verify JavaScript Execution</label>
+                        </div>
+                        
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="verbose" name="verbose">
+                            <label for="verbose">Verbose Logging</label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="payloads">Payloads:</label>
+                            <select id="payloads" name="payloads">
+                                <option value="default">Default Payloads</option>
+                                <option value="effective">Most Effective Payloads</option>
+                                <!-- Additional payload options will be loaded dynamically -->
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="report-format">Report Format:</label>
+                            <select id="report-format" name="reportFormat">
+                                <option value="">No Report</option>
+                                <option value="json">JSON</option>
+                                <option value="html">HTML</option>
+                                <option value="both">Both</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn primary">Start Detection</button>
+                            <button type="reset" class="btn">Reset</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="card" id="progress-card" style="display: none;">
+                    <h2>Progress</h2>
+                    <div class="progress-container">
+                        <div class="progress-bar">
+                            <div class="progress" style="width: 0%"></div>
+                        </div>
+                        <div class="progress-text">0%</div>
+                    </div>
+                    <div class="status">Ready</div>
+                    <div class="log-container">
+                        <div class="log-header">
+                            <h3>Logs</h3>
+                            <button class="btn small" id="clear-logs">Clear</button>
+                        </div>
+                        <div class="logs"></div>
+                    </div>
+                </div>
+                
+                <div class="card" id="results-card" style="display: none;">
+                    <h2>Results</h2>
+                    <div class="summary">
+                        <div class="summary-item">Total Vulnerabilities: <strong id="total-vulns">0</strong></div>
+                        <div class="summary-item">Reflected: <strong id="reflected-vulns">0</strong></div>
+                        <div class="summary-item">Executed: <strong id="executed-vulns">0</strong></div>
+                    </div>
+                    
+                    <div class="vulnerabilities-container">
+                        <!-- Vulnerabilities will be added here dynamically -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Configuration Tab -->
+            <div class="tab-pane" id="configuration">
+                <div class="card">
+                    <h2>Configuration</h2>
+                    <form id="config-form">
+                        <div class="form-group">
+                            <label for="default-browser">Default Browser:</label>
+                            <select id="default-browser" name="browser">
+                                <option value="chromium">Chromium</option>
+                                <option value="firefox">Firefox</option>
+                                <option value="webkit">WebKit</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="default-submit-selector">Default Submit Selector:</label>
+                            <input type="text" id="default-submit-selector" name="submitSelector" placeholder="button[type='submit']">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="default-timeout">Default Timeout (ms):</label>
+                            <input type="number" id="default-timeout" name="timeout" value="2000" min="500" step="500">
+                        </div>
+                        
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="default-verify-execution" name="verifyExecution" checked>
+                            <label for="default-verify-execution">Verify JavaScript Execution</label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="default-report-format">Default Report Format:</label>
+                            <select id="default-report-format" name="report.format">
+                                <option value="">No Report</option>
+                                <option value="json">JSON</option>
+                                <option value="html">HTML</option>
+                                <option value="both">Both</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="report-output-dir">Report Output Directory:</label>
+                            <input type="text" id="report-output-dir" name="report.outputDir" value="./reports">
+                        </div>
+                        
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="track-effectiveness" name="effectiveness.track" checked>
+                            <label for="track-effectiveness">Track Payload Effectiveness</label>
+                        </div>
+                        
+                        <div class="form-group checkbox">
+                            <input type="checkbox" id="use-effective-payloads" name="effectiveness.useEffectivePayloads">
+                            <label for="use-effective-payloads">Use Most Effective Payloads</label>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="effective-payloads-limit">Effective Payloads Limit:</label>
+                            <input type="number" id="effective-payloads-limit" name="effectiveness.limit" value="10" min="1">
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button type="submit" class="btn primary">Save Configuration</button>
+                            <button type="reset" class="btn">Reset</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Reports Tab -->
+            <div class="tab-pane" id="reports">
+                <div class="card">
+                    <h2>Reports</h2>
+                    <div class="reports-container">
+                        <div class="reports-list">
+                            <!-- Reports will be added here dynamically -->
+                            <div class="no-reports">No reports found</div>
+                        </div>
+                        <div class="report-preview">
+                            <div class="no-preview">Select a report to preview</div>
+                            <iframe id="report-iframe" style="display: none;"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

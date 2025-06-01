@@ -1,0 +1,263 @@
+/* General Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  color: #333;
+  background-color: #f8f9fa;
+  padding: 20px;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2, h3 {
+  color: #2c3e50;
+  margin-bottom: 15px;
+}
+
+h1 {
+  font-size: 2.5rem;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 10px;
+}
+
+h2 {
+  font-size: 2rem;
+  margin-top: 30px;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-top: 20px;
+}
+
+p {
+  margin-bottom: 15px;
+}
+
+a {
+  color: #3498db;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+a.btn {
+  display: inline-block;
+  background-color: #3498db;
+  color: white;
+  padding: 8px 15px;
+  border-radius: 4px;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+a.btn:hover {
+  background-color: #2980b9;
+  text-decoration: none;
+}
+
+/* Header */
+header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+header p {
+  font-size: 1.2rem;
+  color: #7f8c8d;
+}
+
+/* Main Content */
+main {
+  margin-bottom: 40px;
+}
+
+/* Vulnerability Types */
+.vulnerability-types {
+  margin-bottom: 40px;
+}
+
+.card {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.05);
+}
+
+.card h3 {
+  color: #e74c3c;
+  margin-top: 0;
+}
+
+.links {
+  margin-top: 15px;
+}
+
+/* Testing Guide */
+.testing-guide {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.guide-item {
+  margin-bottom: 30px;
+}
+
+pre {
+  background-color: #2c3e50;
+  color: #ecf0f1;
+  padding: 15px;
+  border-radius: 4px;
+  overflow-x: auto;
+  margin: 15px 0;
+}
+
+code {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: #f1f1f1;
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  border-radius: 0;
+  font-size: 0.9em;
+}
+
+ul {
+  list-style-type: disc;
+  margin-left: 20px;
+  margin-bottom: 15px;
+}
+
+li {
+  margin-bottom: 8px;
+}
+
+/* Forms */
+form {
+  margin-bottom: 20px;
+}
+
+input, textarea, select, button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 1rem;
+}
+
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+/* Results and Output */
+.results, .output-container, .comments, .messages {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.comment, .message {
+  background-color: white;
+  border-radius: 4px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.comment h3, .message h3 {
+  margin-top: 0;
+  color: #3498db;
+}
+
+small {
+  color: #7f8c8d;
+  display: block;
+  margin-top: 10px;
+}
+
+/* Admin Panel */
+.admin-panel {
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.admin-output {
+  background-color: white;
+  border-radius: 4px;
+  padding: 15px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+}
+
+/* Footer */
+footer {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid #eee;
+  color: #7f8c8d;
+  font-size: 0.9rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+  
+  h1 {
+    font-size: 2rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+  }
+  
+  h3 {
+    font-size: 1.2rem;
+  }
+  
+  pre {
+    padding: 10px;
+  }
+}

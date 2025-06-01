@@ -1,0 +1,56 @@
+{
+  "name": "xss-validator-playwright",
+  "version": "1.0.0",
+  "main": "xssValidator.js",
+  "bin": {
+    "xss-validator": "./cli.js"
+  },
+  "scripts": {
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "install-cli": "npm link",
+    "webui": "node webui/server.js",
+    "postinstall": "node scripts/install-browsers.js",
+    "setup": "npx playwright install --with-deps",
+    "setup:chromium": "npx playwright install --with-deps chromium",
+    "setup:firefox": "npx playwright install --with-deps firefox",
+    "setup:webkit": "npx playwright install --with-deps webkit"
+  },
+  "keywords": [
+    "xss",
+    "security",
+    "testing",
+    "playwright",
+    "vulnerability"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "A tool for detecting XSS vulnerabilities using Playwright",
+  "dependencies": {
+    "commander": "^9.5.0",
+    "express": "^4.18.2",
+    "playwright": "^1.40.0",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "jest-playwright-preset": "^3.0.1",
+    "mock-fs": "^5.2.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/unit/**/*.test.js",
+      "**/tests/integration/**/*.test.js"
+    ],
+    "collectCoverageFrom": [
+      "*.js",
+      "config/**/*.js",
+      "payloads/**/*.js",
+      "reports/**/*.js",
+      "!**/node_modules/**",
+      "!**/tests/**"
+    ]
+  }
+}

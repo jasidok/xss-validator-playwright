@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XSS Validator Demo App</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>XSS Validator Demo App</h1>
+      <p>A collection of pages with known XSS vulnerabilities for testing the XSS Validator tool</p>
+    </header>
+    
+    <main>
+      <section class="vulnerability-types">
+        <h2>Vulnerability Types</h2>
+        
+        <div class="card">
+          <h3>Reflected XSS</h3>
+          <p>XSS vulnerabilities where user input is immediately returned to the user and rendered in the browser.</p>
+          <div class="links">
+            <a href="/search" class="btn">Search Page</a>
+            <a href="/echo" class="btn">Echo Page</a>
+          </div>
+        </div>
+        
+        <div class="card">
+          <h3>Stored XSS</h3>
+          <p>XSS vulnerabilities where user input is stored on the server and rendered when other users view the page.</p>
+          <div class="links">
+            <a href="/comments" class="btn">Comments Page</a>
+          </div>
+        </div>
+        
+        <div class="card">
+          <h3>DOM-based XSS</h3>
+          <p>XSS vulnerabilities where the payload is executed as a result of modifying the DOM environment in the victim's browser.</p>
+          <div class="links">
+            <a href="/dom" class="btn">DOM Manipulation</a>
+          </div>
+        </div>
+        
+        <div class="card">
+          <h3>Session-based XSS</h3>
+          <p>XSS vulnerabilities that require maintaining state between requests.</p>
+          <div class="links">
+            <a href="/messages" class="btn">Messages Page</a>
+          </div>
+        </div>
+        
+        <div class="card">
+          <h3>Authentication-required XSS</h3>
+          <p>XSS vulnerabilities in pages that require authentication.</p>
+          <div class="links">
+            <a href="/login" class="btn">Login Page</a>
+            <a href="/admin" class="btn">Admin Page</a>
+          </div>
+        </div>
+      </section>
+      
+      <section class="testing-guide">
+        <h2>Testing Guide</h2>
+        
+        <div class="guide-item">
+          <h3>Using the XSS Validator with this Demo App</h3>
+          <pre><code>
+# Test the search page for reflected XSS
+xss-validator detect http://localhost:3000/search "#q"
+
+# Test the echo page with HTML context
+xss-validator detect http://localhost:3000/echo "input[name='input']"
+
+# Test the comments page for stored XSS
+xss-validator detect http://localhost:3000/comments "textarea[name='comment']" --submit "button[type='submit']"
+
+# Test the admin page with authentication
+xss-validator detect http://localhost:3000/admin/echo "textarea[name='input']" --auth auth-config.json
+
+# Crawl the entire site and test all inputs
+xss-validator crawl http://localhost:3000 --test
+          </code></pre>
+        </div>
+        
+        <div class="guide-item">
+          <h3>Authentication Configuration</h3>
+          <p>Create a file named <code>auth-config.json</code> with the following content:</p>
+          <pre><code>
+{
+  "url": "http://localhost:3000/login",
+  "usernameSelector": "input[name='username']",
+  "passwordSelector": "input[name='password']",
+  "submitSelector": "button[type='submit']",
+  "username": "admin",
+  "password": "password"
+}
+          </code></pre>
+        </div>
+        
+        <div class="guide-item">
+          <h3>XSS Payloads to Try</h3>
+          <ul>
+            <li><code>&lt;script&gt;alert(1)&lt;/script&gt;</code></li>
+            <li><code>&lt;img src=x onerror=alert(1)&gt;</code></li>
+            <li><code>&lt;svg onload=alert(1)&gt;</code></li>
+            <li><code>javascript:alert(1)</code></li>
+            <li><code>" onmouseover="alert(1)</code></li>
+            <li><code>'-alert(1)-'</code></li>
+          </ul>
+        </div>
+      </section>
+    </main>
+    
+    <footer>
+      <p>This application is intentionally vulnerable to XSS attacks for testing purposes. Do not use in production.</p>
+    </footer>
+  </div>
+</body>
+</html>
