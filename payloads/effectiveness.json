@@ -1,7 +1,21 @@
 {
-  "payloads": {},
+  "payloads": {
+    "<script>alert(1)</script>": {
+      "totalTests": 2305,
+      "reflectedCount": 0,
+      "executedCount": 0,
+      "browsers": {
+        "chromium": {
+          "totalTests": 2305,
+          "reflectedCount": 0,
+          "executedCount": 0
+        }
+      },
+      "lastTested": "2025-06-05T20:48:46.903Z"
+    }
+  },
   "metadata": {
-    "lastUpdated": "2023-07-15T00:00:00.000Z",
-    "totalTests": 0
+    "lastUpdated": "2025-06-05T20:48:46.903Z",
+    "totalTests": 2305
   }
 }
