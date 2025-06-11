@@ -1,21 +1,47 @@
 {
   "payloads": {
     "<script>alert(1)</script>": {
-      "totalTests": 2305,
-      "reflectedCount": 0,
-      "executedCount": 0,
+      "totalTests": 3260,
+      "reflectedCount": 1,
+      "executedCount": 1,
       "browsers": {
         "chromium": {
-          "totalTests": 2305,
-          "reflectedCount": 0,
-          "executedCount": 0
+          "totalTests": 3260,
+          "reflectedCount": 1,
+          "executedCount": 1
         }
       },
-      "lastTested": "2025-06-05T20:48:46.903Z"
+      "lastTested": "2025-06-11T23:55:20.164Z"
+    },
+    "<img src=x onerror=alert(1)>": {
+      "totalTests": 24,
+      "reflectedCount": 1,
+      "executedCount": 1,
+      "browsers": {
+        "chromium": {
+          "totalTests": 24,
+          "reflectedCount": 1,
+          "executedCount": 1
+        }
+      },
+      "lastTested": "2025-06-11T21:32:42.102Z"
+    },
+    "javascript:alert(1)": {
+      "totalTests": 2,
+      "reflectedCount": 1,
+      "executedCount": 1,
+      "browsers": {
+        "chromium": {
+          "totalTests": 2,
+          "reflectedCount": 1,
+          "executedCount": 1
+        }
+      },
+      "lastTested": "2025-06-11T21:23:02.791Z"
     }
   },
   "metadata": {
-    "lastUpdated": "2025-06-05T20:48:46.903Z",
-    "totalTests": 2305
+    "lastUpdated": "2025-06-11T23:55:20.164Z",
+    "totalTests": 3286
   }
 }
